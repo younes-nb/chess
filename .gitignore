@@ -1,3 +1,10 @@
 /venv/pyvenv.cfg
 /venv/Lib/
 /venv/Scripts/
+/.idea/.gitignore
+/.idea/Chess.iml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/inspectionProfiles/profiles_settings.xml
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/vcs.xml
