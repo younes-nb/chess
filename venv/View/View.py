@@ -2,15 +2,8 @@ import os
 from PyQt6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, QMenuBar, QMenu
 from PyQt6.QtGui import QIcon, QAction
 from PyQt6.QtCore import Qt
-
-
-def resource_path(relative_path):
-    try:
-        base_path = sys._MEIPASS
-    except Exception:
-        base_path = os.path.abspath(".")
-
-    return os.path.join(base_path, relative_path)
+from .GameView import GameView
+from res import resource_path
 
 
 class View(QMainWindow):
@@ -19,6 +12,9 @@ class View(QMainWindow):
         self.setWindowState(Qt.WindowState.WindowMaximized)
         self.setWindowTitle("Chess")
         self.setWindowIcon(QIcon(resource_path("Images/icon.png")))
+        self.gameView = GameView()
+        self.setCentralWidget(self.gameView)
+
         menuBar = self.menuBar()
         options = menuBar.addMenu("Options")
 
