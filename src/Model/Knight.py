@@ -15,3 +15,12 @@ class Knight(Piece):
             case "Black":
                 self.image = QPixmap(resource_path("Pieces/black-knight.png"))
                 self.type = "BKnight"
+
+    def allMoves(self):
+        moves = []
+        for (dx, dy) in ((2, 1), (-2, 1), (2, -1), (-2, -1), (1, 2), (1, -2), (-1, 2), (-1, -2)):
+            x = self.position[0] + dx
+            y = self.position[1] + dy
+            if x not in range(8) or y not in range(8):
+                continue
+            moves.append((x, y))

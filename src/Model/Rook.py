@@ -15,3 +15,15 @@ class Rook(Piece):
             case "Black":
                 self.image = QPixmap(resource_path("Pieces/black-rook.png"))
                 self.type = "BRook"
+
+    def allMoves(self):
+        moves = []
+        for (dx, dy) in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            for i in range(1, 8):
+                x = self.position[0] + (dx * i)
+                y = self.position[1] + (dy * i)
+                if x not in range(8) or y not in range(8):
+                    continue
+                moves.append((x, y))
+
+        return moves
