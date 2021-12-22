@@ -24,3 +24,5 @@ class Knight(Piece):
             if x not in range(8) or y not in range(8):
                 continue
             moves.append((x, y))
+
+        return moves

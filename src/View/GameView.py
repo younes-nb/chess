@@ -82,12 +82,28 @@ class GameView(QWidget):
         if self.turn == piece.team and piece.type != "Blank":
             if self.selectedPiece and self.selectedPiece != piece:
                 self.selectedPiece.selected = False
+                self.unPaint()
                 self.selectedPiece.update()
             if piece.selected:
                 piece.selected = False
                 self.selectedPiece = None
+                self.unPaint()
                 piece.update()
             else:
                 self.selectedPiece = piece
                 self.selectedPiece.selected = True
+                self.paint()
                 self.selectedPiece.update()
+
+    def paint(self):
+        if self.selectedPiece:
+            movements = self.selectedPiece.allMoves()
+            for movement in movements:
+                self.pieces[movement[0]][movement[1]].isPainted = True
+                self.pieces[movement[0]][movement[1]].update()
+
+    def unPaint(self):
+        for i in self.pieces:
+            for piece in i:
+                piece.isPainted = False
+                piece.update()
