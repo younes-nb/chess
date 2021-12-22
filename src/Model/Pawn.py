@@ -24,11 +24,13 @@ class Pawn(Piece):
             case "White":
                 x = self.position[0] - 1
                 if self.position[0] == 6:
-                    moves.append((x - 1, y))
+                    if self.game.pieces[x][y].team == "None":
+                        moves.append((x - 1, y))
             case "Black":
                 x = self.position[0] + 1
                 if self.position[0] == 1:
-                    moves.append((x + 1, y))
+                    if self.game.pieces[x][y].team == "None":
+                        moves.append((x + 1, y))
 
         for dy in (-1, 0, 1):
             y = self.position[1] + dy

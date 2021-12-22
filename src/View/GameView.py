@@ -8,6 +8,7 @@ from src.Model.Pawn import Pawn
 from src.Model.Queen import Queen
 from src.Model.Rook import Rook
 from src.Model.King import King
+from src.Model.Piece import Piece
 from src.View.InfoView import InfoView
 
 
@@ -94,6 +95,32 @@ class GameView(QWidget):
                 self.selectedPiece.selected = True
                 self.paint()
                 self.selectedPiece.update()
+
+    def movePiece(self, target: Piece):
+
+        self.board.removeWidget(target)
+        self.board.removeWidget(self.selectedPiece)
+        target.position, self.selectedPiece.position = self.selectedPiece.position, target.position
+        self.board.addWidget(target, target.position[0], target.position[1])
+        self.board.addWidget(self.selectedPiece, self.selectedPiece.position[0], self.selectedPiece.position[1])
+
+        self.pieces[target.position[0]][target.position[1]], \
+            self.pieces[self.selectedPiece.position[0]][self.selectedPiece.position[1]] = \
+            self.pieces[self.selectedPiece.position[0]][self.selectedPiece.position[1]], \
+            self.pieces[target.position[0]][target.position[1]]
+
+        self.unPaint()
+        self.selectedPiece.selected = False
+        target.update()
+        self.selectedPiece.update()
+        self.selectedPiece = None
+        self.board.update()
+        match self.turn:
+            case "White":
+                self.turn = "Black"
+            case "Black":
+                self.turn = "White"
+        self.update()
 
     def paint(self):
         if self.selectedPiece:

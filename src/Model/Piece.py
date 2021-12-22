@@ -13,8 +13,10 @@ class Piece(QLabel):
 
     def mousePressEvent(self, event):
         QLabel.mousePressEvent(self, event)
-
-        self.game.selectPiece(self)
+        if self.isPainted:
+            self.game.movePiece(self)
+        else:
+            self.game.selectPiece(self)
 
     def paintEvent(self, event):
         QLabel.paintEvent(self, event)
