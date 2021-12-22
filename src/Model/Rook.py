@@ -24,6 +24,10 @@ class Rook(Piece):
                 y = self.position[1] + (dy * i)
                 if x not in range(8) or y not in range(8):
                     continue
+                if self.game.pieces[x][y].team == self.team:
+                    break
                 moves.append((x, y))
+                if self.game.pieces[x][y].type != "Blank":
+                    break
 
         return moves

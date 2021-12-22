@@ -23,6 +23,8 @@ class King(Piece):
             y = self.position[1] + dy
             if x not in range(8) or y not in range(8):
                 continue
+            if self.game.pieces[x][y].team == self.team:
+                continue
             moves.append((x, y))
 
         return moves
