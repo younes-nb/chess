@@ -1,7 +1,7 @@
 import sys
 from PyQt6.QtWidgets import QApplication
 from PyQt6.QtGui import QPalette, QColor
-from Controller.Controller import Controller
+from src.View.View import View
 
 
 def main():
@@ -22,7 +22,7 @@ def main():
     palette.setColor(QPalette.ColorRole.Highlight, QColor(42, 130, 218))
     palette.setColor(QPalette.ColorRole.HighlightedText, QColor(0, 0, 0))
     app.setPalette(palette)
-    window = Controller()
+    window = View()
     window.show()
     sys.exit(app.exec())
 

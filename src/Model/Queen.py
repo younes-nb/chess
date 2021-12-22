@@ -4,16 +4,16 @@ from src.res import resource_path
 
 
 class Queen(Piece):
-    def __init__(self, x, y, team):
-        super().__init__(x, y)
+    def __init__(self, game, x, y, team):
+        super().__init__(game, x, y)
         self.team = team
         self.image = None
         match self.team:
             case "White":
-                self.image = QPixmap(resource_path("Pieces/white-queen.png"))
+                self.image = QPixmap(resource_path("Pieces/wq.svg"))
                 self.type = "WQueen"
             case "Black":
-                self.image = QPixmap(resource_path("Pieces/black-queen.png"))
+                self.image = QPixmap(resource_path("Pieces/bq.svg"))
                 self.type = "BQueen"
 
     def allMoves(self):
