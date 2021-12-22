@@ -39,10 +39,14 @@ class Pawn(Piece):
             if dy != 0:
                 match self.team:
                     case "White":
-                        if self.game.pieces[x][y].team != "Black":
+                        if self.game.pieces[x][y].team == "Black":
+                            moves.append((x, y))
+                        else:
                             continue
                     case "Black":
-                        if self.game.pieces[x][y].team != "White":
+                        if self.game.pieces[x][y].team == "White":
+                            moves.append((x, y))
+                        else:
                             continue
             if self.game.pieces[x][y].team == "None":
                 moves.append((x, y))
