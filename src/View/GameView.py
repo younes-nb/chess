@@ -105,7 +105,7 @@ class GameView(QWidget):
         self.board.addWidget(self.selectedPiece, self.selectedPiece.position[0], self.selectedPiece.position[1])
 
         self.pieces[target.position[0]][target.position[1]], \
-            self.pieces[self.selectedPiece.position[0]][self.selectedPiece.position[1]] = \
+        self.pieces[self.selectedPiece.position[0]][self.selectedPiece.position[1]] = \
             self.pieces[self.selectedPiece.position[0]][self.selectedPiece.position[1]], \
             self.pieces[target.position[0]][target.position[1]]
 
@@ -121,6 +121,18 @@ class GameView(QWidget):
             case "Black":
                 self.turn = "White"
         self.update()
+        if target.team != "None":
+            self.capturePiece(target)
+
+    def capturePiece(self, piece: Piece):
+        blank = Blank(self, piece.position[0], piece.position[1])
+        self.pieces[blank.position[0]][blank.position[1]] = blank
+        self.board.removeWidget(piece)
+        self.board.addWidget(blank, blank.position[0], blank.position[1])
+        self.board.update()
+        piece.destroy(False, False)
+        piece.update()
+        blank.update()
 
     def paint(self):
         if self.selectedPiece:

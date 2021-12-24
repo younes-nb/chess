@@ -7,6 +7,8 @@ class Piece(QLabel):
         super().__init__()
         self.game = game
         self.position = [x, y]
+        self.team = None
+        self.type = None
         self.image = None
         self.selected = False
         self.isPainted = False

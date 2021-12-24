@@ -4,8 +4,8 @@ from src.res import resource_path
 
 
 class Blank(Piece):
-    def __init__(self, x, y, game):
-        super().__init__(x, y, game)
+    def __init__(self, game, x, y):
+        super().__init__(game, x, y)
         self.image = QPixmap(resource_path("Media/Pieces/blank.png"))
         self.team = "None"
         self.type = "Blank"
