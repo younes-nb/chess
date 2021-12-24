@@ -35,7 +35,7 @@ class GameView(QWidget):
         infoContainer.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.infoWhite = InfoView("White")
         self.infoBlack = InfoView("Black")
-        self.infoBlack.setContentsMargins(0, 30, 0, 0)
+        self.infoBlack.setContentsMargins(0, 35, 0, 15)
         infoContainer.addLayout(self.infoWhite)
         infoContainer.addLayout(self.infoBlack)
         self.layout.addLayout(infoContainer)
@@ -78,11 +78,6 @@ class GameView(QWidget):
         self.infoBlack.turnIcon.setPixmap(blackTurnIcon)
         self.infoWhite.turnIcon.update()
         self.infoBlack.turnIcon.update()
-
-    def addOutPieceWhite(self, row, column, pieceIcon: QPixmap):
-        outPiece = QLabel()
-        outPiece.setPixmap(pieceIcon)
-        self.infoBlack.outPieces.addWidget(outPiece, row, column)
 
     def selectPiece(self, piece):
         if self.turn == piece.team and piece.type != "Blank":
@@ -146,9 +141,53 @@ class GameView(QWidget):
         self.board.removeWidget(piece)
         self.board.addWidget(blank, blank.position[0], blank.position[1])
         self.board.update()
+        self.addCapturedPieceIcon(piece.type)
         piece.destroy(False, False)
         piece.update()
         blank.update()
+
+    def addCapturedPieceIcon(self, piece):
+        capturedLabel = QLabel()
+        if piece[0] == 'W':
+            match piece:
+                case "WQueen":
+                    capturedLabel.setPixmap(QPixmap(resource_path("Pieces/out-white-queen.png")))
+                case "WBishop":
+                    capturedLabel.setPixmap(QPixmap(resource_path("Pieces/out-white-bishop.png")))
+                case "WKnight":
+                    capturedLabel.setPixmap(QPixmap(resource_path("Pieces/out-white-knight.png")))
+                case "WRook":
+                    capturedLabel.setPixmap(QPixmap(resource_path("Pieces/out-white-rook.png")))
+                case "WPawn":
+                    capturedLabel.setPixmap(QPixmap(resource_path("Pieces/out-white-pawn.png")))
+
+            self.infoWhite.capturedPieces.addWidget(capturedLabel, self.infoWhite.capturedX,
+                                                    self.infoWhite.capturedY)
+            self.infoWhite.capturedY += 1
+            if self.infoWhite.capturedY > 2:
+                self.infoWhite.capturedX += 1
+                self.infoWhite.capturedY = 0
+            self.infoWhite.capturedPieces.update()
+        elif piece[0] == 'B':
+            match piece:
+                case "BQueen":
+                    capturedLabel.setPixmap(QPixmap(resource_path("Pieces/out-black-queen.png")))
+                case "BBishop":
+                    capturedLabel.setPixmap(QPixmap(resource_path("Pieces/out-black-bishop.png")))
+                case "BKnight":
+                    capturedLabel.setPixmap(QPixmap(resource_path("Pieces/out-black-knight.png")))
+                case "BRook":
+                    capturedLabel.setPixmap(QPixmap(resource_path("Pieces/out-black-rook.png")))
+                case "BPawn":
+                    capturedLabel.setPixmap(QPixmap(resource_path("Pieces/out-black-pawn.png")))
+
+            self.infoBlack.capturedPieces.addWidget(capturedLabel, self.infoBlack.capturedX,
+                                                    self.infoBlack.capturedY)
+            self.infoBlack.capturedY += 1
+            if self.infoBlack.capturedY > 2:
+                self.infoBlack.capturedX += 1
+                self.infoBlack.capturedY = 0
+            self.infoBlack.capturedPieces.update()
 
     def paint(self):
         if self.selectedPiece:

@@ -4,7 +4,11 @@ from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout, QGridLayout, QLabel
 class InfoView(QVBoxLayout):
     def __init__(self, name):
         super().__init__()
+        self.capturedX = 0
+        self.capturedY = 0
+
         playerTitle = QHBoxLayout()
+        playerTitle.setContentsMargins(0, 0, 0, 15)
         self.playerName = QLabel(name)
         self.playerName.setStyleSheet("font-size:18px;")
 
@@ -14,5 +18,5 @@ class InfoView(QVBoxLayout):
         playerTitle.setStretch(0, 1)
         self.addLayout(playerTitle)
 
-        self.outPieces = QGridLayout()
-        self.addLayout(self.outPieces)
+        self.capturedPieces = QGridLayout()
+        self.addLayout(self.capturedPieces)

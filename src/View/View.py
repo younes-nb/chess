@@ -7,7 +7,7 @@ from src.res import resource_path
 class View(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setGeometry(100, 100, 700, 600)
+        self.setGeometry(100, 100, 800, 700)
         self.setWindowTitle("Chess")
         self.setWindowIcon(QIcon(resource_path("Icons/icon.png")))
         self.gameView = GameView()
