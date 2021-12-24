@@ -10,6 +10,7 @@ from src.Model.Rook import Rook
 from src.Model.King import King
 from src.Model.Piece import Piece
 from src.View.InfoView import InfoView
+from src.res import resource_path
 
 
 class GameView(QWidget):
@@ -35,11 +36,13 @@ class GameView(QWidget):
         self.infoWhite = InfoView("White")
         self.infoBlack = InfoView("Black")
         self.infoBlack.setContentsMargins(0, 30, 0, 0)
-
         infoContainer.addLayout(self.infoWhite)
         infoContainer.addLayout(self.infoBlack)
         self.layout.addLayout(infoContainer)
         self.layout.setStretch(0, 1)
+        self.setTurnIcon(QPixmap(resource_path("Icons/turn.png")), QPixmap(resource_path("Icons/turn-blank.png")))
+        self.infoWhite.turnIcon.setToolTip("It's your turn!")
+        self.infoBlack.turnIcon.setToolTip("Wait!")
 
     def createBoard(self):
         pieces = [
@@ -73,6 +76,8 @@ class GameView(QWidget):
     def setTurnIcon(self, whiteTurnIcon: QPixmap, blackTurnIcon: QPixmap):
         self.infoWhite.turnIcon.setPixmap(whiteTurnIcon)
         self.infoBlack.turnIcon.setPixmap(blackTurnIcon)
+        self.infoWhite.turnIcon.update()
+        self.infoBlack.turnIcon.update()
 
     def addOutPieceWhite(self, row, column, pieceIcon: QPixmap):
         outPiece = QLabel()
@@ -96,8 +101,23 @@ class GameView(QWidget):
                 self.paint()
                 self.selectedPiece.update()
 
-    def movePiece(self, target: Piece):
+    def changeTurn(self):
+        match self.turn:
+            case "White":
+                self.turn = "Black"
+                self.infoBlack.turnIcon.setToolTip("It's your turn!")
+                self.infoWhite.turnIcon.setToolTip("Wait!")
+                self.setTurnIcon(QPixmap(resource_path("Icons/turn-blank.png")),
+                                 QPixmap(resource_path("Icons/turn.png")))
 
+            case "Black":
+                self.turn = "White"
+                self.infoWhite.turnIcon.setToolTip("It's your turn!")
+                self.infoBlack.turnIcon.setToolTip("Wait!")
+                self.setTurnIcon(QPixmap(resource_path("Icons/turn.png")),
+                                 QPixmap(resource_path("Icons/turn-blank.png")))
+
+    def movePiece(self, target: Piece):
         self.board.removeWidget(target)
         self.board.removeWidget(self.selectedPiece)
         target.position, self.selectedPiece.position = self.selectedPiece.position, target.position
@@ -115,11 +135,7 @@ class GameView(QWidget):
         self.selectedPiece.update()
         self.selectedPiece = None
         self.board.update()
-        match self.turn:
-            case "White":
-                self.turn = "Black"
-            case "Black":
-                self.turn = "White"
+        self.changeTurn()
         self.update()
         if target.team != "None":
             self.capturePiece(target)
