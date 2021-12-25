@@ -1,4 +1,4 @@
-from src.Model.Piece import Piece
+from src.Model.piece import Piece
 from PyQt6.QtGui import QPixmap
 from src.res import resource_path
 
@@ -16,7 +16,7 @@ class Pawn(Piece):
                 self.image = QPixmap(resource_path("Pieces/bp.svg"))
                 self.type = "BPawn"
 
-    def allMoves(self):
+    def all_moves(self):
         moves = []
         x = None
         y = self.position[1]

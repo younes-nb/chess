@@ -1,4 +1,4 @@
-from src.Model.Piece import Piece
+from src.Model.piece import Piece
 from PyQt6.QtGui import QPixmap
 from src.res import resource_path
 
@@ -16,7 +16,7 @@ class Knight(Piece):
                 self.image = QPixmap(resource_path("Pieces/bn.svg"))
                 self.type = "BKnight"
 
-    def allMoves(self):
+    def all_moves(self):
         moves = []
         for (dx, dy) in ((2, 1), (-2, 1), (2, -1), (-2, -1), (1, 2), (1, -2), (-1, 2), (-1, -2)):
             x = self.position[0] + dx

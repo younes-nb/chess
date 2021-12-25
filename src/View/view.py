@@ -1,6 +1,6 @@
 from PyQt6.QtGui import QIcon, QAction
 from PyQt6.QtWidgets import QMainWindow
-from src.View.GameView import GameView
+from src.View.game import Game
 from src.res import resource_path
 
 
@@ -10,12 +10,12 @@ class View(QMainWindow):
         self.setGeometry(100, 100, 800, 700)
         self.setWindowTitle("Chess")
         self.setWindowIcon(QIcon(resource_path("Icons/icon.png")))
-        self.gameView = GameView()
-        self.setCentralWidget(self.gameView)
+        self.game = Game()
+        self.setCentralWidget(self.game)
 
-        menuBar = self.menuBar()
+        menu_bar = self.menuBar()
 
-        options = menuBar.addMenu("Options")
+        options = menu_bar.addMenu("Options")
 
         self.undo = QAction(QIcon(resource_path("Icons/undo.png")), "Undo")
         self.undo.setShortcut("Ctrl+Z")

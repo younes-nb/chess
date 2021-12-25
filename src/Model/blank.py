@@ -1,4 +1,4 @@
-from src.Model.Piece import Piece
+from src.Model.piece import Piece
 from PyQt6.QtGui import QPixmap
 from src.res import resource_path
 

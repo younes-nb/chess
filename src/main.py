@@ -1,7 +1,7 @@
 import sys
 from PyQt6.QtWidgets import QApplication
 from PyQt6.QtGui import QPalette, QColor
-from src.View.View import View
+from src.View.view import View
 
 
 def main():

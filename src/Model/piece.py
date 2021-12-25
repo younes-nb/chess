@@ -11,33 +11,33 @@ class Piece(QLabel):
         self.type = None
         self.image = None
         self.selected = False
-        self.isPainted = False
+        self.is_painted = False
 
     def mousePressEvent(self, event):
         QLabel.mousePressEvent(self, event)
-        if self.isPainted:
-            self.game.movePiece(self)
+        if self.is_painted:
+            self.game.move_piece(self)
         else:
-            self.game.selectPiece(self)
+            self.game.select_piece(self)
 
     def paintEvent(self, event):
         QLabel.paintEvent(self, event)
         paint = QPainter(self)
-        whiteColor = QColor(190, 190, 190)
-        blackColor = QColor(60, 60, 60)
-        selectedColor = QColor(QRgba64.fromRgba(120, 150, 200, 150))
-        paintedColor = QColor(QRgba64.fromRgba(100, 70, 220, 150))
+        white_color = QColor(190, 190, 190)
+        black_color = QColor(60, 60, 60)
+        selected_color = QColor(QRgba64.fromRgba(120, 150, 200, 150))
+        painted_color = QColor(QRgba64.fromRgba(100, 70, 220, 150))
 
         if (self.position[0] + self.position[1]) % 2 == 0:
-            paint.fillRect(0, 0, self.width(), self.height(), whiteColor)
+            paint.fillRect(0, 0, self.width(), self.height(), white_color)
 
         else:
-            paint.fillRect(0, 0, self.width(), self.height(), blackColor)
+            paint.fillRect(0, 0, self.width(), self.height(), black_color)
 
         if self.selected:
-            paint.fillRect(0, 0, self.width(), self.height(), selectedColor)
+            paint.fillRect(0, 0, self.width(), self.height(), selected_color)
 
-        if self.isPainted:
-            paint.fillRect(0, 0, self.width(), self.height(), paintedColor)
+        if self.is_painted:
+            paint.fillRect(0, 0, self.width(), self.height(), painted_color)
 
         paint.drawPixmap(0, 0, self.width(), self.height(), QPixmap(self.image))

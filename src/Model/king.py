@@ -1,5 +1,5 @@
-from src.Model.Piece import Piece
-from PyQt6.QtGui import QPixmap, QPainter
+from src.Model.piece import Piece
+from PyQt6.QtGui import QPixmap, QPainter, QColor
 from src.res import resource_path
 
 
@@ -8,6 +8,7 @@ class King(Piece):
         super().__init__(game, x, y)
         self.team = team
         self.image = None
+        self.is_checked = False
         match self.team:
             case "White":
                 self.image = QPixmap(resource_path("Pieces/wk.svg"))
@@ -16,7 +17,7 @@ class King(Piece):
                 self.image = QPixmap(resource_path("Pieces/bk.svg"))
                 self.type = "BKing"
 
-    def allMoves(self):
+    def all_moves(self):
         moves = []
         for (dx, dy) in ((1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (1, -1), (-1, 1), (-1, -1)):
             x = self.position[0] + dx
@@ -32,4 +33,6 @@ class King(Piece):
     def paintEvent(self, event):
         super().paintEvent(event)
         paint = QPainter(self)
+        if self.is_checked:
+            paint.fillRect(0, 0, self.width(), self.height(), QColor(255, 0, 40))
         paint.drawPixmap(0, 0, self.width(), self.height(), QPixmap(self.image))
