@@ -1,7 +1,7 @@
 from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout, QGridLayout, QLabel
 
 
-class Info(QVBoxLayout):
+class InfoView(QVBoxLayout):
     def __init__(self, name):
         super().__init__()
         self.captured_x = 0

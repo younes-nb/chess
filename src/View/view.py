@@ -1,17 +1,14 @@
 from PyQt6.QtGui import QIcon, QAction
 from PyQt6.QtWidgets import QMainWindow
-from src.View.game import Game
 from src.res import resource_path
 
 
 class View(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setGeometry(100, 100, 800, 700)
+        self.setGeometry(100, 100, 850, 700)
         self.setWindowTitle("Chess")
         self.setWindowIcon(QIcon(resource_path("Icons/icon.png")))
-        self.game = Game()
-        self.setCentralWidget(self.game)
 
         menu_bar = self.menuBar()
 

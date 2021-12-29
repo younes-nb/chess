@@ -1,56 +1,28 @@
-from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QGridLayout, QLabel
 from PyQt6.QtGui import QPixmap
-from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QLabel
 from src.Model.bishop import Bishop
 from src.Model.blank import Blank
+from src.Model.king import King
 from src.Model.knight import Knight
 from src.Model.pawn import Pawn
+from src.Model.piece import Piece
 from src.Model.queen import Queen
 from src.Model.rook import Rook
-from src.Model.king import King
-from src.Model.piece import Piece
-from src.View.info import Info
+from src.View.game_view import GameView
 from src.res import resource_path
 
 
-class Game(QWidget):
+class GameController(GameView):
     def __init__(self):
-        super().__init__()
-        self.black_king = King(self, 0, 4, "Black")
-        self.white_king = King(self, 7, 4, "White")
+        super().__init__(self.create_pieces())
         self.selected_piece = None
         self.turn = "White"
 
-        self.layout = QHBoxLayout(self)
-        self.board = QGridLayout()
-        self.board.setSpacing(0)
-        self.board.setContentsMargins(0, 0, 0, 0)
-        self.layout.addLayout(self.board)
-        self.layout.addSpacing(20)
-
-        self.pieces = self.create_board()
-        for x in range(8):
-            for y in range(8):
-                self.board.addWidget(self.pieces[x][y], x, y)
-
-        info_container = QVBoxLayout()
-        info_container.setAlignment(Qt.AlignmentFlag.AlignTop)
-        self.info_white = Info("White")
-        self.info_black = Info("Black")
-        self.info_black.setContentsMargins(0, 35, 0, 15)
-        info_container.addLayout(self.info_white)
-        info_container.addLayout(self.info_black)
-        self.layout.addLayout(info_container)
-        self.layout.setStretch(0, 1)
-        self.set_turn_icon(QPixmap(resource_path("Icons/turn.png")), QPixmap(resource_path("Icons/turn-blank.png")))
-        self.info_white.turn_icon.setToolTip("It's your turn!")
-        self.info_black.turn_icon.setToolTip("Wait!")
-
-    def create_board(self):
+    def create_pieces(self):
         pieces = [
             [Rook(self, 0, 0, "Black"), Knight(self, 0, 1, "Black"),
              Bishop(self, 0, 2, "Black"), Queen(self, 0, 3, "Black"),
-             self.black_king, Bishop(self, 0, 5, "Black"),
+             King(self, 0, 4, "Black"), Bishop(self, 0, 5, "Black"),
              Knight(self, 0, 6, "Black"), Rook(self, 0, 7, "Black")],
             [Pawn(self, 1, 0, "Black"), Pawn(self, 1, 1, "Black"),
              Pawn(self, 1, 2, "Black"), Pawn(self, 1, 3, "Black"),
@@ -70,7 +42,7 @@ class Game(QWidget):
              Pawn(self, 6, 6, "White"), Pawn(self, 6, 7, "White")],
             [Rook(self, 7, 0, "White"), Knight(self, 7, 1, "White"),
              Bishop(self, 7, 2, "White"), Queen(self, 7, 3, "White"),
-             self.white_king, Bishop(self, 7, 5, "White"),
+             King(self, 7, 4, "White"), Bishop(self, 7, 5, "White"),
              Knight(self, 7, 6, "White"), Rook(self, 7, 7, "White")]
         ]
         return pieces
@@ -121,10 +93,10 @@ class Game(QWidget):
         self.board.addWidget(target, target.position[0], target.position[1])
         self.board.addWidget(self.selected_piece, self.selected_piece.position[0], self.selected_piece.position[1])
 
-        self.pieces[target.position[0]][target.position[1]], \
-        self.pieces[self.selected_piece.position[0]][self.selected_piece.position[1]] = \
-            self.pieces[self.selected_piece.position[0]][self.selected_piece.position[1]], \
-            self.pieces[target.position[0]][target.position[1]]
+        self.pieces[target.position[0]][target.position[1]], self.pieces[self.selected_piece.position[0]][
+            self.selected_piece.position[1]] = self.pieces[self.selected_piece.position[0]][
+                                                   self.selected_piece.position[1]], self.pieces[target.position[0]][
+                                                   target.position[1]]
 
         self.un_paint()
         self.selected_piece.selected = False
@@ -183,7 +155,6 @@ class Game(QWidget):
                     captured_label.setPixmap(QPixmap(resource_path("Pieces/out-black-rook.png")))
                 case "BPawn":
                     captured_label.setPixmap(QPixmap(resource_path("Pieces/out-black-pawn.png")))
-
             self.info_black.captured_pieces.addWidget(captured_label, self.info_black.captured_x,
                                                       self.info_black.captured_y)
             self.info_black.captured_y += 1
@@ -193,61 +164,139 @@ class Game(QWidget):
             self.info_black.captured_pieces.update()
 
     def check(self):
-        try:
-            opponent_king = self.checked_king(True)
-            king = self.checked_king(False)
-            found_opponent_king = False
-            found_king = False
-            for row in self.pieces:
+        opponent_king = self.checked_king(True)
+        king = self.checked_king(False)
+        found_opponent_king = False
+        found_king = False
+        for row in self.pieces:
+            if found_opponent_king:
+                break
+            for piece in row:
                 if found_opponent_king:
                     break
-                for piece in row:
-                    if found_opponent_king:
-                        break
-                    if piece.team != self.turn and piece.team != "None":
-                        for movement in piece.all_moves():
-                            if self.pieces[movement[0]][movement[1]].type == king.type:
-                                found_king = True
-                    if piece.team == self.turn:
-                        for movement in piece.all_moves():
-                            if self.pieces[movement[0]][movement[1]].type == opponent_king.type:
-                                found_opponent_king = True
-                                opponent_king.is_checked = True
-                                opponent_king.update()
-                                break
-            if not found_opponent_king:
-                opponent_king.is_checked = False
-                opponent_king.update()
-            if not found_king:
-                king.is_checked = False
-                king.update()
-
-        except Exception as e:
-            print(e.__str__())
+                if piece.team != self.turn and piece.team != "None":
+                    for movement in piece.all_moves():
+                        if self.pieces[movement[0]][movement[1]].type == king.type:
+                            found_king = True
+                if piece.team == self.turn:
+                    for movement in piece.all_moves():
+                        if self.pieces[movement[0]][movement[1]].type == opponent_king.type:
+                            found_opponent_king = True
+                            opponent_king.is_checked = True
+                            opponent_king.update()
+                            break
+        if not found_opponent_king:
+            opponent_king.is_checked = False
+            opponent_king.update()
+        if not found_king:
+            king.is_checked = False
+            king.update()
 
     def checked_king(self, check):
+        white_king = None
+        black_king = None
+        for row in self.pieces:
+            for piece in row:
+                if piece.type == "WKing":
+                    white_king = piece
+                elif piece.type == "BKing":
+                    black_king = piece
         if check:
             match self.turn:
                 case "White":
-                    return self.black_king
+                    return black_king
                 case "Black":
-                    return self.white_king
+                    return white_king
         else:
             match self.turn:
                 case "White":
-                    return self.white_king
+                    return white_king
                 case "Black":
-                    return self.black_king
+                    return black_king
 
     def paint(self):
         if self.selected_piece:
             movements = self.selected_piece.all_moves()
             for movement in movements:
-                self.pieces[movement[0]][movement[1]].is_painted = True
-                self.pieces[movement[0]][movement[1]].update()
+                if movement_validation(movement, self.create_copy()):
+                    self.pieces[movement[0]][movement[1]].is_painted = True
+                    self.pieces[movement[0]][movement[1]].update()
 
     def un_paint(self):
         for i in self.pieces:
             for piece in i:
                 piece.is_painted = False
                 piece.update()
+
+    def create_copy(self):
+        game_copy = GameController()
+        for row in self.pieces:
+            for piece in row:
+                x = piece.position[0]
+                y = piece.position[1]
+                match piece.type:
+                    case "WKing":
+                        game_copy.pieces[x][y] = King(game_copy, x, y, "White")
+                    case "BKing":
+                        game_copy.pieces[x][y] = King(game_copy, x, y, "Black")
+                    case "WQueen":
+                        game_copy.pieces[x][y] = Queen(game_copy, x, y, "White")
+                    case "BQueen":
+                        game_copy.pieces[x][y] = Queen(game_copy, x, y, "Black")
+                    case "WBishop":
+                        game_copy.pieces[x][y] = Bishop(game_copy, x, y, "White")
+                    case "BBishop":
+                        game_copy.pieces[x][y] = Bishop(game_copy, x, y, "Black")
+                    case "WKnight":
+                        game_copy.pieces[x][y] = Knight(game_copy, x, y, "White")
+                    case "BKnight":
+                        game_copy.pieces[x][y] = Knight(game_copy, x, y, "Black")
+                    case "WRook":
+                        game_copy.pieces[x][y] = Rook(game_copy, x, y, "White")
+                    case "BRook":
+                        game_copy.pieces[x][y] = Rook(game_copy, x, y, "Black")
+                    case "WPawn":
+                        game_copy.pieces[x][y] = Pawn(game_copy, x, y, "White")
+                    case "BPawn":
+                        game_copy.pieces[x][y] = Pawn(game_copy, x, y, "Black")
+                    case "Blank":
+                        game_copy.pieces[x][y] = Blank(game_copy, x, y)
+
+        for row in game_copy.pieces:
+            for piece in row:
+                if piece.position == self.selected_piece.position:
+                    game_copy.selected_piece = piece
+                    break
+        return game_copy
+
+
+def movement_validation(movement: tuple, game_copy: GameController):
+    target = game_copy.pieces[movement[0]][movement[1]]
+    target.position, game_copy.selected_piece.position = game_copy.selected_piece.position, target.position
+    game_copy.pieces[target.position[0]][target.position[1]], \
+        game_copy.pieces[game_copy.selected_piece.position[0]][
+        game_copy.selected_piece.position[1]] = game_copy.pieces[game_copy.selected_piece.position[0]][
+                                                    game_copy.selected_piece.position[1]], \
+                                                game_copy.pieces[target.position[0]][
+                                                    target.position[1]]
+    if target.team != "None":
+        game_copy.pieces[target.position[0]][target.position[1]] = Blank(game_copy, target.position[0],
+                                                                         target.position[1])
+    king = None
+    found = False
+    for row in game_copy.pieces:
+        if found:
+            break
+        for piece in row:
+            if piece.team == game_copy.selected_piece.team and piece.type[1::] == "King":
+                king = piece
+                found = True
+                break
+
+    for row in game_copy.pieces:
+        for piece in row:
+            if piece.team != game_copy.selected_piece.team and piece.team != "None":
+                for move in piece.all_moves():
+                    if game_copy.pieces[move[0]][move[1]].type == king.type:
+                        return False
+    return True

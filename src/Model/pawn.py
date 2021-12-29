@@ -24,12 +24,12 @@ class Pawn(Piece):
             case "White":
                 x = self.position[0] - 1
                 if self.position[0] == 6:
-                    if self.game.pieces[x][y].team == "None":
+                    if self.game.pieces[x][y].team == "None" and self.game.pieces[x - 1][y].team == "None":
                         moves.append((x - 1, y))
             case "Black":
                 x = self.position[0] + 1
                 if self.position[0] == 1:
-                    if self.game.pieces[x][y].team == "None":
+                    if self.game.pieces[x][y].team == "None" and self.game.pieces[x + 1][y].team == "None":
                         moves.append((x + 1, y))
 
         for dy in (-1, 0, 1):
@@ -37,17 +37,10 @@ class Pawn(Piece):
             if x not in range(8) or y not in range(8):
                 continue
             if dy != 0:
-                match self.team:
-                    case "White":
-                        if self.game.pieces[x][y].team == "Black":
-                            moves.append((x, y))
-                        else:
-                            continue
-                    case "Black":
-                        if self.game.pieces[x][y].team == "White":
-                            moves.append((x, y))
-                        else:
-                            continue
+                if self.game.pieces[x][y].team != self.team and self.game.pieces[x][y].team != "None":
+                    moves.append((x, y))
+                else:
+                    continue
             if self.game.pieces[x][y].team == "None":
                 moves.append((x, y))
 
