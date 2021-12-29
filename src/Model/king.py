@@ -9,6 +9,7 @@ class King(Piece):
         self.team = team
         self.image = None
         self.is_checked = False
+        self.is_check_mate = False
         match self.team:
             case "White":
                 self.image = QPixmap(resource_path("Pieces/wk.svg"))
@@ -34,5 +35,8 @@ class King(Piece):
         super().paintEvent(event)
         paint = QPainter(self)
         if self.is_checked:
-            paint.fillRect(0, 0, self.width(), self.height(), QColor(255, 0, 40))
+            paint.fillRect(0, 0, self.width(), self.height(), QColor(242, 39, 39))
+
+        if self.is_check_mate:
+            paint.fillRect(0, 0, self.width(), self.height(), QColor(145, 12, 12))
         paint.drawPixmap(0, 0, self.width(), self.height(), QPixmap(self.image))

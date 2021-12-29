@@ -97,17 +97,17 @@ class GameController(GameView):
             self.selected_piece.position[1]] = self.pieces[self.selected_piece.position[0]][
                                                    self.selected_piece.position[1]], self.pieces[target.position[0]][
                                                    target.position[1]]
-
         self.un_paint()
         self.selected_piece.selected = False
         target.update()
         self.selected_piece.update()
-        self.selected_piece = None
-        self.board.update()
+
         if target.team != "None":
             self.capture_piece(target)
         self.check()
+        self.selected_piece = None
         self.change_turn()
+        self.board.update()
         self.update()
 
     def capture_piece(self, piece: Piece):
@@ -214,18 +214,52 @@ class GameController(GameView):
                 case "Black":
                     return black_king
 
+    def check_mate(self):
+        opponent_king = self.checked_king(False)
+        mate = True
+        for row in self.pieces:
+            if not mate:
+                break
+            for piece in row:
+                if not mate:
+                    break
+                self.selected_piece = piece
+                if piece.team == opponent_king.team:
+                    for movement in piece.all_moves():
+                        if movement_validation(movement, self.create_copy()):
+                            mate = False
+                            break
+        self.selected_piece = None
+        if mate:
+            for row in self.pieces:
+                for piece in row:
+                    if piece.team != opponent_king.team and piece.team != "None":
+                        for movement in piece.all_moves():
+                            if self.pieces[movement[0]][movement[1]].type == opponent_king.type:
+                                piece.checker = True
+                                piece.update()
+                                break
+
+            opponent_king.is_check_mate = True
+            opponent_king.update()
+        return mate
+
     def paint(self):
         if self.selected_piece:
             movements = self.selected_piece.all_moves()
             for movement in movements:
                 if movement_validation(movement, self.create_copy()):
-                    self.pieces[movement[0]][movement[1]].is_painted = True
+                    if self.pieces[movement[0]][movement[1]].team != "None":
+                        self.pieces[movement[0]][movement[1]].target = True
+                    else:
+                        self.pieces[movement[0]][movement[1]].is_painted = True
                     self.pieces[movement[0]][movement[1]].update()
 
     def un_paint(self):
         for i in self.pieces:
             for piece in i:
                 piece.is_painted = False
+                piece.target = False
                 piece.update()
 
     def create_copy(self):
