@@ -1,3 +1,5 @@
+import copy
+
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtWidgets import QLabel
 from src.Model.bishop import Bishop
@@ -8,6 +10,7 @@ from src.Model.pawn import Pawn
 from src.Model.piece import Piece
 from src.Model.queen import Queen
 from src.Model.rook import Rook
+from src.Model.piece_copy import *
 from src.View.game_view import GameView
 from src.res import resource_path
 
@@ -263,74 +266,84 @@ class GameController(GameView):
                 piece.update()
 
     def create_copy(self):
-        game_copy = GameController()
+        pieces_copy = []
+        for i in range(8):
+            pieces_copy.append([])
+            for j in range(8):
+                pieces_copy[i].append(None)
+
         for row in self.pieces:
             for piece in row:
                 x = piece.position[0]
                 y = piece.position[1]
                 match piece.type:
                     case "WKing":
-                        game_copy.pieces[x][y] = King(game_copy, x, y, "White")
+                        pieces_copy[x][y] = KingCopy(pieces_copy, x, y, "White")
                     case "BKing":
-                        game_copy.pieces[x][y] = King(game_copy, x, y, "Black")
+                        pieces_copy[x][y] = KingCopy(pieces_copy, x, y, "Black")
                     case "WQueen":
-                        game_copy.pieces[x][y] = Queen(game_copy, x, y, "White")
+                        pieces_copy[x][y] = QueenCopy(pieces_copy, x, y, "White")
                     case "BQueen":
-                        game_copy.pieces[x][y] = Queen(game_copy, x, y, "Black")
+                        pieces_copy[x][y] = QueenCopy(pieces_copy, x, y, "Black")
                     case "WBishop":
-                        game_copy.pieces[x][y] = Bishop(game_copy, x, y, "White")
+                        pieces_copy[x][y] = BishopCopy(pieces_copy, x, y, "White")
                     case "BBishop":
-                        game_copy.pieces[x][y] = Bishop(game_copy, x, y, "Black")
+                        pieces_copy[x][y] = BishopCopy(pieces_copy, x, y, "Black")
                     case "WKnight":
-                        game_copy.pieces[x][y] = Knight(game_copy, x, y, "White")
+                        pieces_copy[x][y] = KnightCopy(pieces_copy, x, y, "White")
                     case "BKnight":
-                        game_copy.pieces[x][y] = Knight(game_copy, x, y, "Black")
+                        pieces_copy[x][y] = KnightCopy(pieces_copy, x, y, "Black")
                     case "WRook":
-                        game_copy.pieces[x][y] = Rook(game_copy, x, y, "White")
+                        pieces_copy[x][y] = RookCopy(pieces_copy, x, y, "White")
                     case "BRook":
-                        game_copy.pieces[x][y] = Rook(game_copy, x, y, "Black")
+                        pieces_copy[x][y] = RookCopy(pieces_copy, x, y, "Black")
                     case "WPawn":
-                        game_copy.pieces[x][y] = Pawn(game_copy, x, y, "White")
+                        pieces_copy[x][y] = PawnCopy(pieces_copy, x, y, "White")
                     case "BPawn":
-                        game_copy.pieces[x][y] = Pawn(game_copy, x, y, "Black")
+                        pieces_copy[x][y] = PawnCopy(pieces_copy, x, y, "Black")
                     case "Blank":
-                        game_copy.pieces[x][y] = Blank(game_copy, x, y)
+                        pieces_copy[x][y] = BlankCopy(pieces_copy, x, y)
 
-        for row in game_copy.pieces:
+        for row in pieces_copy:
             for piece in row:
                 if piece.position == self.selected_piece.position:
-                    game_copy.selected_piece = piece
+                    piece.selected = True
                     break
-        return game_copy
+        return pieces_copy
 
 
-def movement_validation(movement: tuple, game_copy: GameController):
-    target = game_copy.pieces[movement[0]][movement[1]]
-    target.position, game_copy.selected_piece.position = game_copy.selected_piece.position, target.position
-    game_copy.pieces[target.position[0]][target.position[1]], \
-        game_copy.pieces[game_copy.selected_piece.position[0]][
-        game_copy.selected_piece.position[1]] = game_copy.pieces[game_copy.selected_piece.position[0]][
-                                                    game_copy.selected_piece.position[1]], \
-                                                game_copy.pieces[target.position[0]][
-                                                    target.position[1]]
+def movement_validation(movement: tuple, pieces_copy: list):
+    selected_piece = None
+    for row in pieces_copy:
+        for piece in row:
+            if piece.selected:
+                selected_piece = piece
+    target = pieces_copy[movement[0]][movement[1]]
+    target.position, selected_piece.position = selected_piece.position, target.position
+    pieces_copy[target.position[0]][target.position[1]], \
+    pieces_copy[selected_piece.position[0]][
+        selected_piece.position[1]] = pieces_copy[selected_piece.position[0]][
+                                          selected_piece.position[1]], \
+                                      pieces_copy[target.position[0]][
+                                          target.position[1]]
     if target.team != "None":
-        game_copy.pieces[target.position[0]][target.position[1]] = Blank(game_copy, target.position[0],
-                                                                         target.position[1])
+        pieces_copy[target.position[0]][target.position[1]] = BlankCopy(pieces_copy, target.position[0],
+                                                                        target.position[1])
     king = None
     found = False
-    for row in game_copy.pieces:
+    for row in pieces_copy:
         if found:
             break
         for piece in row:
-            if piece.team == game_copy.selected_piece.team and piece.type[1::] == "King":
+            if piece.team == selected_piece.team and piece.type[1::] == "King":
                 king = piece
                 found = True
                 break
 
-    for row in game_copy.pieces:
+    for row in pieces_copy:
         for piece in row:
-            if piece.team != game_copy.selected_piece.team and piece.team != "None":
+            if piece.team != selected_piece.team and piece.team != "None":
                 for move in piece.all_moves():
-                    if game_copy.pieces[move[0]][move[1]].type == king.type:
+                    if pieces_copy[move[0]][move[1]].type == king.type:
                         return False
     return True
