@@ -1,7 +1,7 @@
-import copy
-
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtWidgets import QLabel
+
+from src.Controller.winner_controller import WinnerController
 from src.Model.bishop import Bishop
 from src.Model.blank import Blank
 from src.Model.king import King
@@ -12,12 +12,16 @@ from src.Model.queen import Queen
 from src.Model.rook import Rook
 from src.Model.piece_copy import *
 from src.View.game_view import GameView
+from src.View.info_view import InfoView
 from src.res import resource_path
 
 
 class GameController(GameView):
-    def __init__(self):
-        super().__init__(self.create_pieces())
+    def __init__(self, controller, white_name, black_name):
+        super().__init__(self.create_pieces(), white_name, black_name)
+        self.controller = controller
+        self.winner = WinnerController(self)
+        self.winner.hide()
         self.selected_piece = None
         self.turn = "White"
 
@@ -130,14 +134,19 @@ class GameController(GameView):
             match piece:
                 case "WQueen":
                     captured_label.setPixmap(QPixmap(resource_path("Pieces/out-white-queen.png")))
+                    captured_label.setToolTip("Queen")
                 case "WBishop":
                     captured_label.setPixmap(QPixmap(resource_path("Pieces/out-white-bishop.png")))
+                    captured_label.setToolTip("Bishop")
                 case "WKnight":
                     captured_label.setPixmap(QPixmap(resource_path("Pieces/out-white-knight.png")))
+                    captured_label.setToolTip("Knight")
                 case "WRook":
                     captured_label.setPixmap(QPixmap(resource_path("Pieces/out-white-rook.png")))
+                    captured_label.setToolTip("Rook")
                 case "WPawn":
                     captured_label.setPixmap(QPixmap(resource_path("Pieces/out-white-pawn.png")))
+                    captured_label.setToolTip("Pawn")
 
             self.info_white.captured_pieces.addWidget(captured_label, self.info_white.captured_x,
                                                       self.info_white.captured_y)
@@ -150,14 +159,19 @@ class GameController(GameView):
             match piece:
                 case "BQueen":
                     captured_label.setPixmap(QPixmap(resource_path("Pieces/out-black-queen.png")))
+                    captured_label.setToolTip("Queen")
                 case "BBishop":
                     captured_label.setPixmap(QPixmap(resource_path("Pieces/out-black-bishop.png")))
+                    captured_label.setToolTip("Bishop")
                 case "BKnight":
                     captured_label.setPixmap(QPixmap(resource_path("Pieces/out-black-knight.png")))
+                    captured_label.setToolTip("Knight")
                 case "BRook":
                     captured_label.setPixmap(QPixmap(resource_path("Pieces/out-black-rook.png")))
+                    captured_label.setToolTip("Rook")
                 case "BPawn":
                     captured_label.setPixmap(QPixmap(resource_path("Pieces/out-black-pawn.png")))
+                    captured_label.setToolTip("Pawn")
             self.info_black.captured_pieces.addWidget(captured_label, self.info_black.captured_x,
                                                       self.info_black.captured_y)
             self.info_black.captured_y += 1
@@ -242,9 +256,15 @@ class GameController(GameView):
                                 piece.checker = True
                                 piece.update()
                                 break
-
             opponent_king.is_check_mate = True
             opponent_king.update()
+            match opponent_king.team:
+                case "White":
+                    self.winner.set_name(self.black_name)
+                case "Black":
+                    self.winner.set_name(self.white_name)
+            self.winner.update()
+            self.winner.show()
         return mate
 
     def paint(self):

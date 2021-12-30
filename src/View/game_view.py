@@ -6,9 +6,10 @@ from src.res import resource_path
 
 
 class GameView(QWidget):
-    def __init__(self, pieces):
+    def __init__(self, pieces, white_name, black_name):
         super().__init__()
-
+        self.white_name = white_name
+        self.black_name = black_name
         self.layout = QHBoxLayout(self)
         self.board = QGridLayout()
         self.board.setSpacing(0)
@@ -20,16 +21,21 @@ class GameView(QWidget):
         self.layout.addLayout(self.board)
         self.layout.addSpacing(20)
 
+        self.info_white = InfoView(self.white_name)
+        self.info_white.player_icon.setPixmap(QPixmap(resource_path("Icons/white-player.png")))
+        self.info_white.turn_icon.setPixmap(QPixmap(resource_path("Icons/turn.png")))
+        self.info_white.turn_icon.setToolTip("It's your turn!")
+
+        self.info_black = InfoView(self.black_name)
+        self.info_black.player_icon.setPixmap(QPixmap(resource_path("Icons/black-player.png")))
+        self.info_black.turn_icon.setPixmap(QPixmap(resource_path("Icons/turn-blank.png")))
+        self.info_black.turn_icon.setToolTip("Wait!")
+        self.info_black.setContentsMargins(0, 35, 0, 15)
+
         info_container = QVBoxLayout()
         info_container.setAlignment(Qt.AlignmentFlag.AlignTop)
-        self.info_white = InfoView("White")
-        self.info_black = InfoView("Black")
-        self.info_black.setContentsMargins(0, 35, 0, 15)
         info_container.addLayout(self.info_white)
         info_container.addLayout(self.info_black)
+
         self.layout.addLayout(info_container)
         self.layout.setStretch(0, 1)
-        self.info_white.turn_icon.setPixmap(QPixmap(resource_path("Icons/turn.png")))
-        self.info_black.turn_icon.setPixmap(QPixmap(resource_path("Icons/turn-blank.png")))
-        self.info_white.turn_icon.setToolTip("It's your turn!")
-        self.info_black.turn_icon.setToolTip("Wait!")

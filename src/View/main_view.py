@@ -3,10 +3,10 @@ from PyQt6.QtWidgets import QMainWindow
 from src.res import resource_path
 
 
-class View(QMainWindow):
+class MainView(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setGeometry(100, 100, 850, 700)
+        self.setGeometry(100, 100, 900, 700)
         self.setWindowTitle("Chess")
         self.setWindowIcon(QIcon(resource_path("Icons/icon.png")))
 
