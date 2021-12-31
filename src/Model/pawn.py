@@ -5,7 +5,7 @@ from src.res import resource_path
 
 class Pawn(Piece):
     def __init__(self, game, x, y, team):
-        super().__init__(game, x, y)
+        super(Pawn, self).__init__(game, x, y)
         self.team = team
         self.image = None
         match self.team:

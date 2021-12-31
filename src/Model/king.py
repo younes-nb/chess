@@ -5,7 +5,7 @@ from src.res import resource_path
 
 class King(Piece):
     def __init__(self, game, x, y, team):
-        super().__init__(game, x, y)
+        super(King, self).__init__(game, x, y)
         self.team = team
         self.image = None
         self.is_checked = False
@@ -32,7 +32,7 @@ class King(Piece):
         return moves
 
     def paintEvent(self, event):
-        super().paintEvent(event)
+        super(King, self).paintEvent(event)
         paint = QPainter(self)
         if self.is_checked:
             paint.fillRect(0, 0, self.width(), self.height(), QColor(242, 39, 39))

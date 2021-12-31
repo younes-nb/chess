@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout, QGridLayout, QLabel, QPush
 
 class InfoView(QVBoxLayout):
     def __init__(self, name):
-        super().__init__()
+        super(InfoView, self).__init__()
         self.captured_x = 0
         self.captured_y = 0
 

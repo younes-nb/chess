@@ -5,7 +5,7 @@ from src.View.start_view import StartView
 class StartController(StartView):
     def __init__(self):
         super(StartController, self).__init__()
-        self.main_controller = MainController("White", "Black")
+        self.main_controller = MainController("White", "Black", self)
         self.play_button.clicked.connect(self.init_play_button)
 
     def init_play_button(self):
@@ -16,6 +16,6 @@ class StartController(StartView):
         if self.black_player_name.text():
             black_name = self.black_player_name.text()
 
-        self.main_controller = MainController(white_name, black_name)
+        self.main_controller = MainController(white_name, black_name, self)
         self.main_controller.show()
         self.hide()

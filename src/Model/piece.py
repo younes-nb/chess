@@ -4,7 +4,7 @@ from PyQt6.QtWidgets import QLabel
 
 class Piece(QLabel):
     def __init__(self, game, x, y):
-        super().__init__()
+        super(Piece, self).__init__()
         self.game = game
         self.position = [x, y]
         self.team = None
@@ -18,7 +18,7 @@ class Piece(QLabel):
     def mousePressEvent(self, event):
         QLabel.mousePressEvent(self, event)
         if self.is_painted or self.target:
-            self.game.move_piece(self)
+            self.game.move_piece(self, None, False)
             if self.game.checked_king(False).is_checked:
                 if self.game.check_mate():
                     self.game.setDisabled(True)

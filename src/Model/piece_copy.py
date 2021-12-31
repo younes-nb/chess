@@ -1,6 +1,6 @@
 class PieceCopy:
     def __init__(self, pieces, x, y):
-        super().__init__()
+        super(PieceCopy, self).__init__()
         self.pieces = pieces
         self.position = [x, y]
         self.team = None
@@ -13,7 +13,7 @@ class PieceCopy:
 
 class KingCopy(PieceCopy):
     def __init__(self, pieces, x, y, team):
-        super().__init__(pieces, x, y)
+        super(KingCopy, self).__init__(pieces, x, y)
         self.team = team
         self.is_checked = False
         self.is_check_mate = False
@@ -39,7 +39,7 @@ class KingCopy(PieceCopy):
 
 class QueenCopy(PieceCopy):
     def __init__(self, pieces, x, y, team):
-        super().__init__(pieces, x, y)
+        super(QueenCopy, self).__init__(pieces, x, y)
         self.team = team
         match self.team:
             case "White":
@@ -66,7 +66,7 @@ class QueenCopy(PieceCopy):
 
 class BishopCopy(PieceCopy):
     def __init__(self, pieces, x, y, team):
-        super().__init__(pieces, x, y)
+        super(BishopCopy, self).__init__(pieces, x, y)
         self.team = team
         match self.team:
             case "White":
@@ -93,7 +93,7 @@ class BishopCopy(PieceCopy):
 
 class KnightCopy(PieceCopy):
     def __init__(self, pieces, x, y, team):
-        super().__init__(pieces, x, y)
+        super(KnightCopy, self).__init__(pieces, x, y)
         self.team = team
         match self.team:
             case "White":
@@ -117,7 +117,7 @@ class KnightCopy(PieceCopy):
 
 class RookCopy(PieceCopy):
     def __init__(self, pieces, x, y, team):
-        super().__init__(pieces, x, y)
+        super(RookCopy, self).__init__(pieces, x, y)
         self.team = team
         match self.team:
             case "White":
@@ -144,7 +144,7 @@ class RookCopy(PieceCopy):
 
 class PawnCopy(PieceCopy):
     def __init__(self, pieces, x, y, team):
-        super().__init__(pieces, x, y)
+        super(PawnCopy, self).__init__(pieces, x, y)
         self.team = team
         match self.team:
             case "White":
@@ -185,6 +185,6 @@ class PawnCopy(PieceCopy):
 
 class BlankCopy(PieceCopy):
     def __init__(self, pieces, x, y):
-        super().__init__(pieces, x, y)
+        super(BlankCopy, self).__init__(pieces, x, y)
         self.team = "None"
         self.type = "Blank"

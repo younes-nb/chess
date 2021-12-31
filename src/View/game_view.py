@@ -7,7 +7,7 @@ from src.res import resource_path
 
 class GameView(QWidget):
     def __init__(self, pieces, white_name, black_name):
-        super().__init__()
+        super(GameView, self).__init__()
         self.white_name = white_name
         self.black_name = black_name
         self.layout = QHBoxLayout(self)

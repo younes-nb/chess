@@ -19,12 +19,14 @@ from src.res import resource_path
 
 class GameController(GameView):
     def __init__(self, controller, white_name, black_name):
-        super().__init__(self.create_pieces(), white_name, black_name)
+        super(GameController, self).__init__(self.create_pieces(), white_name, black_name)
         self.controller = controller
         self.winner = WinnerController(self)
         self.winner.hide()
         self.promoted_pawn = None
         self.selected_piece = None
+        self.captured_pieces_white = list()
+        self.captured_pieces_black = list()
         self.turn = "White"
         self.init_promote_buttons()
 
@@ -96,25 +98,33 @@ class GameController(GameView):
                 self.set_turn_icon(QPixmap(resource_path("Icons/turn.png")),
                                    QPixmap(resource_path("Icons/turn-blank.png")))
 
-    def move_piece(self, target: Piece):
+    def move_piece(self, target: Piece, piece, undo):
+        if not piece:
+            piece = self.selected_piece
         self.board.removeWidget(target)
-        self.board.removeWidget(self.selected_piece)
-        target.position, self.selected_piece.position = self.selected_piece.position, target.position
+        self.board.removeWidget(piece)
+        target.position, piece.position = piece.position, target.position
         self.board.addWidget(target, target.position[0], target.position[1])
-        self.board.addWidget(self.selected_piece, self.selected_piece.position[0], self.selected_piece.position[1])
+        self.board.addWidget(piece, piece.position[0], piece.position[1])
 
-        self.pieces[target.position[0]][target.position[1]], self.pieces[self.selected_piece.position[0]][
-            self.selected_piece.position[1]] = self.pieces[self.selected_piece.position[0]][
-                                                   self.selected_piece.position[1]], self.pieces[target.position[0]][
-                                                   target.position[1]]
+        self.pieces[target.position[0]][target.position[1]], self.pieces[piece.position[0]][
+            piece.position[1]] = self.pieces[piece.position[0]][
+                                     piece.position[1]], self.pieces[target.position[0]][
+                                     target.position[1]]
         self.un_paint()
-        self.selected_piece.selected = False
+        piece.selected = False
         target.update()
-        self.selected_piece.update()
+        piece.update()
 
         if target.team != "None":
-            self.capture_piece(target, True)
-
+            if not undo:
+                self.controller.movements.move((piece.type, tuple(target.position),
+                                                tuple(piece.position), target.type, False))
+            self.capture_piece(target)
+        else:
+            if not undo:
+                self.controller.movements.move((piece.type, tuple(target.position),
+                                                tuple(piece.position), False, False))
         self.promotion()
         self.check()
         self.selected_piece = None
@@ -122,15 +132,13 @@ class GameController(GameView):
         self.board.update()
         self.update()
 
-    def capture_piece(self, piece: Piece, add_icon):
+    def capture_piece(self, piece: Piece):
         blank = Blank(self, piece.position[0], piece.position[1])
         self.pieces[blank.position[0]][blank.position[1]] = blank
         self.board.removeWidget(piece)
         self.board.addWidget(blank, blank.position[0], blank.position[1])
         self.board.update()
-        if add_icon:
-            self.add_captured_piece_icon(piece.type)
-        piece.destroy(False, False)
+        self.add_captured_piece_icon(piece.type)
         piece.update()
         blank.update()
 
@@ -156,10 +164,12 @@ class GameController(GameView):
 
             self.info_white.captured_pieces.addWidget(captured_label, self.info_white.captured_x,
                                                       self.info_white.captured_y)
+
             self.info_white.captured_y += 1
             if self.info_white.captured_y > 3:
                 self.info_white.captured_x += 1
                 self.info_white.captured_y = 0
+            self.captured_pieces_white.append(captured_label)
             self.info_white.captured_pieces.update()
         elif piece[0] == 'B':
             match piece:
@@ -180,10 +190,12 @@ class GameController(GameView):
                     captured_label.setToolTip("Pawn")
             self.info_black.captured_pieces.addWidget(captured_label, self.info_black.captured_x,
                                                       self.info_black.captured_y)
+
             self.info_black.captured_y += 1
             if self.info_black.captured_y > 3:
                 self.info_black.captured_x += 1
                 self.info_black.captured_y = 0
+            self.captured_pieces_black.append(captured_label)
             self.info_black.captured_pieces.update()
 
     def check(self):
