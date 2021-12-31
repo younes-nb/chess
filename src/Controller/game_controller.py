@@ -1,3 +1,5 @@
+from functools import partial
+
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtWidgets import QLabel
 
@@ -8,11 +10,10 @@ from src.Model.king import King
 from src.Model.knight import Knight
 from src.Model.pawn import Pawn
 from src.Model.piece import Piece
+from src.Model.piece_copy import *
 from src.Model.queen import Queen
 from src.Model.rook import Rook
-from src.Model.piece_copy import *
 from src.View.game_view import GameView
-from src.View.info_view import InfoView
 from src.res import resource_path
 
 
@@ -22,8 +23,10 @@ class GameController(GameView):
         self.controller = controller
         self.winner = WinnerController(self)
         self.winner.hide()
+        self.promoted_pawn = None
         self.selected_piece = None
         self.turn = "White"
+        self.init_promote_buttons()
 
     def create_pieces(self):
         pieces = [
@@ -110,20 +113,23 @@ class GameController(GameView):
         self.selected_piece.update()
 
         if target.team != "None":
-            self.capture_piece(target)
+            self.capture_piece(target, True)
+
+        self.promotion()
         self.check()
         self.selected_piece = None
         self.change_turn()
         self.board.update()
         self.update()
 
-    def capture_piece(self, piece: Piece):
+    def capture_piece(self, piece: Piece, add_icon):
         blank = Blank(self, piece.position[0], piece.position[1])
         self.pieces[blank.position[0]][blank.position[1]] = blank
         self.board.removeWidget(piece)
         self.board.addWidget(blank, blank.position[0], blank.position[1])
         self.board.update()
-        self.add_captured_piece_icon(piece.type)
+        if add_icon:
+            self.add_captured_piece_icon(piece.type)
         piece.destroy(False, False)
         piece.update()
         blank.update()
@@ -151,7 +157,7 @@ class GameController(GameView):
             self.info_white.captured_pieces.addWidget(captured_label, self.info_white.captured_x,
                                                       self.info_white.captured_y)
             self.info_white.captured_y += 1
-            if self.info_white.captured_y > 2:
+            if self.info_white.captured_y > 3:
                 self.info_white.captured_x += 1
                 self.info_white.captured_y = 0
             self.info_white.captured_pieces.update()
@@ -175,7 +181,7 @@ class GameController(GameView):
             self.info_black.captured_pieces.addWidget(captured_label, self.info_black.captured_x,
                                                       self.info_black.captured_y)
             self.info_black.captured_y += 1
-            if self.info_black.captured_y > 2:
+            if self.info_black.captured_y > 3:
                 self.info_black.captured_x += 1
                 self.info_black.captured_y = 0
             self.info_black.captured_pieces.update()
@@ -208,6 +214,7 @@ class GameController(GameView):
         if not found_king:
             king.is_checked = False
             king.update()
+        self.board.update()
 
     def checked_king(self, check):
         white_king = None
@@ -266,6 +273,94 @@ class GameController(GameView):
             self.winner.update()
             self.winner.show()
         return mate
+
+    def promotion(self):
+        for row in self.pieces:
+            for piece in row:
+                if piece.type[1::] == "Pawn":
+                    match piece.team:
+                        case "White":
+                            if piece.position[0] == 0:
+                                self.promoted_pawn = piece
+                                self.info_white.promotion_text.show()
+                                self.info_white.queen.show()
+                                self.info_white.bishop.show()
+                                self.info_white.knight.show()
+                                self.info_white.rook.show()
+                                self.disable_board(True)
+
+                        case "Black":
+                            if piece.position[0] == 7:
+                                self.promoted_pawn = piece
+                                self.info_black.promotion_text.show()
+                                self.info_black.queen.show()
+                                self.info_black.bishop.show()
+                                self.info_black.knight.show()
+                                self.info_black.rook.show()
+                                self.disable_board(True)
+
+    def disable_board(self, disable: bool):
+        for row in self.pieces:
+            for piece in row:
+                piece.setDisabled(disable)
+                piece.update()
+
+    def init_promote_buttons(self):
+        self.info_white.queen.clicked.connect(partial(self.add_promoted, "Queen"))
+        self.info_white.bishop.clicked.connect(partial(self.add_promoted, "Bishop"))
+        self.info_white.knight.clicked.connect(partial(self.add_promoted, "Knight"))
+        self.info_white.rook.clicked.connect(partial(self.add_promoted, "Rook"))
+        self.info_black.queen.clicked.connect(partial(self.add_promoted, "Queen"))
+        self.info_black.bishop.clicked.connect(partial(self.add_promoted, "Bishop"))
+        self.info_black.knight.clicked.connect(partial(self.add_promoted, "Knight"))
+        self.info_black.rook.clicked.connect(partial(self.add_promoted, "Rook"))
+
+    def add_promoted(self, promoted):
+        try:
+            self.info_white.promotion_text.hide()
+            self.info_white.queen.hide()
+            self.info_white.bishop.hide()
+            self.info_white.knight.hide()
+            self.info_white.rook.hide()
+            self.info_black.promotion_text.hide()
+            self.info_black.queen.hide()
+            self.info_black.bishop.hide()
+            self.info_black.knight.hide()
+            self.info_black.rook.hide()
+            promoted_piece = None
+            match promoted:
+                case "Queen":
+                    promoted_piece = Queen(self, self.promoted_pawn.position[0], self.promoted_pawn.position[1],
+                                           self.promoted_pawn.team)
+                case "Bishop":
+                    promoted_piece = Bishop(self, self.promoted_pawn.position[0], self.promoted_pawn.position[1],
+                                            self.promoted_pawn.team)
+                case "Knight":
+                    promoted_piece = Knight(self, self.promoted_pawn.position[0], self.promoted_pawn.position[1],
+                                            self.promoted_pawn.team)
+                case "Rook":
+                    promoted_piece = Rook(self, self.promoted_pawn.position[0], self.promoted_pawn.position[1],
+                                          self.promoted_pawn.team)
+
+            self.pieces[promoted_piece.position[0]][promoted_piece.position[1]] = promoted_piece
+            self.board.removeWidget(self.promoted_pawn)
+            self.board.addWidget(promoted_piece, promoted_piece.position[0], promoted_piece.position[1])
+            self.board.update()
+            self.promoted_pawn.destroy(False, False)
+            self.promoted_pawn.update()
+            self.promoted_pawn = None
+            self.disable_board(False)
+            promoted_piece.update()
+            opponent_king = self.checked_king(False)
+            for movement in promoted_piece.all_moves():
+                if self.pieces[movement[0]][movement[1]].type == opponent_king.type:
+                    opponent_king.is_checked = True
+                    opponent_king.update()
+                    break
+
+            self.update()
+        except Exception as e:
+            print(e)
 
     def paint(self):
         if self.selected_piece:

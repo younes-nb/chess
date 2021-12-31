@@ -1,5 +1,5 @@
-from src.View.start_view import StartView
 from src.Controller.main_controller import MainController
+from src.View.start_view import StartView
 
 
 class StartController(StartView):
