@@ -13,6 +13,7 @@ from src.Model.piece import Piece
 from src.Model.piece_copy import *
 from src.Model.queen import Queen
 from src.Model.rook import Rook
+from src.Model.movement import Movement
 from src.View.game_view import GameView
 from src.res import resource_path
 
@@ -24,6 +25,7 @@ class GameController(GameView):
         self.winner = WinnerController(self)
         self.winner.hide()
         self.promoted_pawn = None
+        self.promoted_position = tuple()
         self.selected_piece = None
         self.captured_pieces_white = list()
         self.captured_pieces_black = list()
@@ -115,17 +117,15 @@ class GameController(GameView):
         piece.selected = False
         target.update()
         piece.update()
-
+        movement = Movement(tuple(target.position), tuple(piece.position))
         if target.team != "None":
-            if not undo:
-                self.controller.movements.move((piece.type, tuple(target.position),
-                                                tuple(piece.position), target.type, False))
+            movement.captured = target.type
             self.capture_piece(target)
-        else:
+        if not self.promotion():
             if not undo:
-                self.controller.movements.move((piece.type, tuple(target.position),
-                                                tuple(piece.position), False, False))
-        self.promotion()
+                self.controller.movements.move(movement)
+        else:
+            self.promoted_position = tuple(target.position)
         self.check()
         self.selected_piece = None
         self.change_turn()
@@ -300,6 +300,7 @@ class GameController(GameView):
                                 self.info_white.knight.show()
                                 self.info_white.rook.show()
                                 self.disable_board(True)
+                                return True
 
                         case "Black":
                             if piece.position[0] == 7:
@@ -310,6 +311,7 @@ class GameController(GameView):
                                 self.info_black.knight.show()
                                 self.info_black.rook.show()
                                 self.disable_board(True)
+                                return True
 
     def disable_board(self, disable: bool):
         for row in self.pieces:
@@ -354,6 +356,9 @@ class GameController(GameView):
                     promoted_piece = Rook(self, self.promoted_pawn.position[0], self.promoted_pawn.position[1],
                                           self.promoted_pawn.team)
 
+            movement = Movement(self.promoted_position, tuple(promoted_piece.position))
+            movement.promoted = promoted_piece.type
+            self.controller.movements.move(movement)
             self.pieces[promoted_piece.position[0]][promoted_piece.position[1]] = promoted_piece
             self.board.removeWidget(self.promoted_pawn)
             self.board.addWidget(promoted_piece, promoted_piece.position[0], promoted_piece.position[1])

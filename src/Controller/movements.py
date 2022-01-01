@@ -1,4 +1,5 @@
 from collections import deque
+from src.Model.movement import Movement
 
 
 class Movements:
@@ -6,7 +7,7 @@ class Movements:
         self._undo_stack = deque()
         self._redo_stack = deque()
 
-    def move(self, movement: tuple):
+    def move(self, movement: Movement):
         self._undo_stack.append(movement)
         self._redo_stack.clear()
 
