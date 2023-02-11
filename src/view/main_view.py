@@ -8,26 +8,26 @@ class MainView(QMainWindow):
         super(MainView, self).__init__()
         self.setGeometry(100, 100, 900, 700)
         self.setWindowTitle("Chess")
-        self.setWindowIcon(QIcon(resource_path("Icons/icon.png")))
+        self.setWindowIcon(QIcon(resource_path("icons/icon.png")))
 
         menu_bar = self.menuBar()
 
         options = menu_bar.addMenu("Options")
 
-        self.undo = QAction(QIcon(resource_path("Icons/undo.png")), "Undo")
+        self.undo = QAction(QIcon(resource_path("icons/undo.png")), "Undo")
         self.undo.setShortcut("Ctrl+Z")
         options.addAction(self.undo)
 
-        self.redo = QAction(QIcon(resource_path("Icons/redo.png")), "Redo")
+        self.redo = QAction(QIcon(resource_path("icons/redo.png")), "Redo")
         self.redo.setShortcut("Ctrl+Y")
         options.addAction(self.redo)
 
-        self.reset = QAction(QIcon(resource_path("Icons/reset.png")), "Reset")
+        self.reset = QAction(QIcon(resource_path("icons/reset.png")), "Reset")
         self.reset.setShortcut("Ctrl+R")
         options.addAction(self.reset)
 
-        self.back = QAction(QIcon(resource_path("Icons/back.png")), "Back")
+        self.back = QAction(QIcon(resource_path("icons/back.png")), "Back")
         options.addAction(self.back)
 
-        self.exit = QAction(QIcon(resource_path("Icons/exit.png")), "Exit")
+        self.exit = QAction(QIcon(resource_path("icons/exit.png")), "Exit")
         options.addAction(self.exit)

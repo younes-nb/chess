@@ -1,4 +1,4 @@
-from src.Model.piece import Piece
+from src.model.piece import Piece
 from PyQt6.QtGui import QPixmap
 from src.res import resource_path
 
@@ -10,10 +10,10 @@ class Pawn(Piece):
         self.image = None
         match self.team:
             case "White":
-                self.image = QPixmap(resource_path("Pieces/wp.svg"))
+                self.image = QPixmap(resource_path("pieces/wp.svg"))
                 self.type = "WPawn"
             case "Black":
-                self.image = QPixmap(resource_path("Pieces/bp.svg"))
+                self.image = QPixmap(resource_path("pieces/bp.svg"))
                 self.type = "BPawn"
 
     def all_moves(self):

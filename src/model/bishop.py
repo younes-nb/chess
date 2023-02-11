@@ -1,4 +1,4 @@
-from src.Model.piece import Piece
+from src.model.piece import Piece
 from PyQt6.QtGui import QPixmap
 from src.res import resource_path
 
@@ -10,10 +10,10 @@ class Bishop(Piece):
         self.image = None
         match self.team:
             case "White":
-                self.image = QPixmap(resource_path("Pieces/wb.svg"))
+                self.image = QPixmap(resource_path("pieces/wb.svg"))
                 self.type = "WBishop"
             case "Black":
-                self.image = QPixmap(resource_path("Pieces/bb.svg"))
+                self.image = QPixmap(resource_path("pieces/bb.svg"))
                 self.type = "BBishop"
 
     def all_moves(self):

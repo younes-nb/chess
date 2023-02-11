@@ -1,12 +1,12 @@
-from src.Controller.game_controller import GameController
-from src.Controller.movements import Movements
-from src.Model.bishop import Bishop
-from src.Model.knight import Knight
-from src.Model.pawn import Pawn
-from src.Model.queen import Queen
-from src.Model.rook import Rook
-from src.Model.movement import Movement
-from src.View.main_view import MainView
+from src.controller.game_controller import GameController
+from src.controller.movements import Movements
+from src.model.bishop import Bishop
+from src.model.knight import Knight
+from src.model.pawn import Pawn
+from src.model.queen import Queen
+from src.model.rook import Rook
+from src.model.movement import Movement
+from src.view.main_view import MainView
 
 
 class MainController(MainView):

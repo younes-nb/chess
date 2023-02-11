@@ -1,5 +1,5 @@
 from collections import deque
-from src.Model.movement import Movement
+from src.model.movement import Movement
 
 
 class Movements:

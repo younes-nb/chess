@@ -1,4 +1,4 @@
-from src.View.winner_view import WinnerView
+from src.view.winner_view import WinnerView
 
 
 class WinnerController(WinnerView):

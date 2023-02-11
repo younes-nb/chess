@@ -1,7 +1,7 @@
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QGridLayout
-from src.View.info_view import InfoView
+from src.view.info_view import InfoView
 from src.res import resource_path
 
 
@@ -22,13 +22,13 @@ class GameView(QWidget):
         self.layout.addSpacing(20)
 
         self.info_white = InfoView(self.white_name)
-        self.info_white.player_icon.setPixmap(QPixmap(resource_path("Icons/white-player.png")))
-        self.info_white.turn_icon.setPixmap(QPixmap(resource_path("Icons/turn.png")))
+        self.info_white.player_icon.setPixmap(QPixmap(resource_path("icons/white-player.png")))
+        self.info_white.turn_icon.setPixmap(QPixmap(resource_path("icons/turn.png")))
         self.info_white.turn_icon.setToolTip("It's your turn!")
 
         self.info_black = InfoView(self.black_name)
-        self.info_black.player_icon.setPixmap(QPixmap(resource_path("Icons/black-player.png")))
-        self.info_black.turn_icon.setPixmap(QPixmap(resource_path("Icons/turn-blank.png")))
+        self.info_black.player_icon.setPixmap(QPixmap(resource_path("icons/black-player.png")))
+        self.info_black.turn_icon.setPixmap(QPixmap(resource_path("icons/turn-blank.png")))
         self.info_black.turn_icon.setToolTip("Wait!")
         self.info_black.setContentsMargins(0, 35, 0, 15)
 

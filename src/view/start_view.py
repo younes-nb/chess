@@ -9,17 +9,17 @@ class StartView(QWidget):
     def __init__(self):
         super(StartView, self).__init__()
         self.setWindowTitle("Chess")
-        self.setWindowIcon(QIcon(resource_path("Icons/icon.png")))
+        self.setWindowIcon(QIcon(resource_path("icons/icon.png")))
 
         self.layout = QVBoxLayout(self)
 
         self.start_image = QLabel()
-        self.start_image.setPixmap(QPixmap(resource_path("Icons/start-image.png")))
+        self.start_image.setPixmap(QPixmap(resource_path("icons/start-image.png")))
         self.start_image.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.start_image.setContentsMargins(0, 10, 0, 30)
 
         white_player_image = QLabel()
-        white_player_image.setPixmap(QPixmap(resource_path("Icons/white-player.png")))
+        white_player_image.setPixmap(QPixmap(resource_path("icons/white-player.png")))
 
         self.white_player_name = QLineEdit("White")
         self.white_player_name.setPlaceholderText("Please Enter Your Name")
@@ -31,7 +31,7 @@ class StartView(QWidget):
         white_player_container.addWidget(self.white_player_name)
 
         black_player_image = QLabel()
-        black_player_image.setPixmap(QPixmap(resource_path("Icons/black-player.png")))
+        black_player_image.setPixmap(QPixmap(resource_path("icons/black-player.png")))
 
         self.black_player_name = QLineEdit("Black")
         self.black_player_name.setPlaceholderText("Please Enter Your Name")

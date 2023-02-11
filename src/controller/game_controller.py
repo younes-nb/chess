@@ -3,18 +3,18 @@ from functools import partial
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtWidgets import QLabel
 
-from src.Controller.winner_controller import WinnerController
-from src.Model.bishop import Bishop
-from src.Model.blank import Blank
-from src.Model.king import King
-from src.Model.knight import Knight
-from src.Model.pawn import Pawn
-from src.Model.piece import Piece
-from src.Model.piece_copy import *
-from src.Model.queen import Queen
-from src.Model.rook import Rook
-from src.Model.movement import Movement
-from src.View.game_view import GameView
+from src.controller.winner_controller import WinnerController
+from src.model.bishop import Bishop
+from src.model.blank import Blank
+from src.model.king import King
+from src.model.knight import Knight
+from src.model.pawn import Pawn
+from src.model.piece import Piece
+from src.model.piece_copy import *
+from src.model.queen import Queen
+from src.model.rook import Rook
+from src.model.movement import Movement
+from src.view.game_view import GameView
 from src.res import resource_path
 
 
@@ -90,15 +90,15 @@ class GameController(GameView):
                 self.turn = "Black"
                 self.info_black.turn_icon.setToolTip("It's your turn!")
                 self.info_white.turn_icon.setToolTip("Wait!")
-                self.set_turn_icon(QPixmap(resource_path("Icons/turn-blank.png")),
-                                   QPixmap(resource_path("Icons/turn.png")))
+                self.set_turn_icon(QPixmap(resource_path("icons/turn-blank.png")),
+                                   QPixmap(resource_path("icons/turn.png")))
 
             case "Black":
                 self.turn = "White"
                 self.info_white.turn_icon.setToolTip("It's your turn!")
                 self.info_black.turn_icon.setToolTip("Wait!")
-                self.set_turn_icon(QPixmap(resource_path("Icons/turn.png")),
-                                   QPixmap(resource_path("Icons/turn-blank.png")))
+                self.set_turn_icon(QPixmap(resource_path("icons/turn.png")),
+                                   QPixmap(resource_path("icons/turn-blank.png")))
 
     def move_piece(self, target: Piece, piece, undo):
         if not piece:
@@ -147,19 +147,19 @@ class GameController(GameView):
         if piece[0] == 'W':
             match piece:
                 case "WQueen":
-                    captured_label.setPixmap(QPixmap(resource_path("Pieces/out-white-queen.png")))
+                    captured_label.setPixmap(QPixmap(resource_path("pieces/out-white-queen.png")))
                     captured_label.setToolTip("Queen")
                 case "WBishop":
-                    captured_label.setPixmap(QPixmap(resource_path("Pieces/out-white-bishop.png")))
+                    captured_label.setPixmap(QPixmap(resource_path("pieces/out-white-bishop.png")))
                     captured_label.setToolTip("Bishop")
                 case "WKnight":
-                    captured_label.setPixmap(QPixmap(resource_path("Pieces/out-white-knight.png")))
+                    captured_label.setPixmap(QPixmap(resource_path("pieces/out-white-knight.png")))
                     captured_label.setToolTip("Knight")
                 case "WRook":
-                    captured_label.setPixmap(QPixmap(resource_path("Pieces/out-white-rook.png")))
+                    captured_label.setPixmap(QPixmap(resource_path("pieces/out-white-rook.png")))
                     captured_label.setToolTip("Rook")
                 case "WPawn":
-                    captured_label.setPixmap(QPixmap(resource_path("Pieces/out-white-pawn.png")))
+                    captured_label.setPixmap(QPixmap(resource_path("pieces/out-white-pawn.png")))
                     captured_label.setToolTip("Pawn")
 
             self.info_white.captured_pieces.addWidget(captured_label, self.info_white.captured_x,
@@ -174,19 +174,19 @@ class GameController(GameView):
         elif piece[0] == 'B':
             match piece:
                 case "BQueen":
-                    captured_label.setPixmap(QPixmap(resource_path("Pieces/out-black-queen.png")))
+                    captured_label.setPixmap(QPixmap(resource_path("pieces/out-black-queen.png")))
                     captured_label.setToolTip("Queen")
                 case "BBishop":
-                    captured_label.setPixmap(QPixmap(resource_path("Pieces/out-black-bishop.png")))
+                    captured_label.setPixmap(QPixmap(resource_path("pieces/out-black-bishop.png")))
                     captured_label.setToolTip("Bishop")
                 case "BKnight":
-                    captured_label.setPixmap(QPixmap(resource_path("Pieces/out-black-knight.png")))
+                    captured_label.setPixmap(QPixmap(resource_path("pieces/out-black-knight.png")))
                     captured_label.setToolTip("Knight")
                 case "BRook":
-                    captured_label.setPixmap(QPixmap(resource_path("Pieces/out-black-rook.png")))
+                    captured_label.setPixmap(QPixmap(resource_path("pieces/out-black-rook.png")))
                     captured_label.setToolTip("Rook")
                 case "BPawn":
-                    captured_label.setPixmap(QPixmap(resource_path("Pieces/out-black-pawn.png")))
+                    captured_label.setPixmap(QPixmap(resource_path("pieces/out-black-pawn.png")))
                     captured_label.setToolTip("Pawn")
             self.info_black.captured_pieces.addWidget(captured_label, self.info_black.captured_x,
                                                       self.info_black.captured_y)
@@ -330,54 +330,52 @@ class GameController(GameView):
         self.info_black.rook.clicked.connect(partial(self.add_promoted, "Rook"))
 
     def add_promoted(self, promoted):
-        try:
-            self.info_white.promotion_text.hide()
-            self.info_white.queen.hide()
-            self.info_white.bishop.hide()
-            self.info_white.knight.hide()
-            self.info_white.rook.hide()
-            self.info_black.promotion_text.hide()
-            self.info_black.queen.hide()
-            self.info_black.bishop.hide()
-            self.info_black.knight.hide()
-            self.info_black.rook.hide()
-            promoted_piece = None
-            match promoted:
-                case "Queen":
-                    promoted_piece = Queen(self, self.promoted_pawn.position[0], self.promoted_pawn.position[1],
-                                           self.promoted_pawn.team)
-                case "Bishop":
-                    promoted_piece = Bishop(self, self.promoted_pawn.position[0], self.promoted_pawn.position[1],
-                                            self.promoted_pawn.team)
-                case "Knight":
-                    promoted_piece = Knight(self, self.promoted_pawn.position[0], self.promoted_pawn.position[1],
-                                            self.promoted_pawn.team)
-                case "Rook":
-                    promoted_piece = Rook(self, self.promoted_pawn.position[0], self.promoted_pawn.position[1],
-                                          self.promoted_pawn.team)
 
-            movement = Movement(self.promoted_position, tuple(promoted_piece.position))
-            movement.promoted = promoted_piece.type
-            self.controller.movements.move(movement)
-            self.pieces[promoted_piece.position[0]][promoted_piece.position[1]] = promoted_piece
-            self.board.removeWidget(self.promoted_pawn)
-            self.board.addWidget(promoted_piece, promoted_piece.position[0], promoted_piece.position[1])
-            self.board.update()
-            self.promoted_pawn.destroy(False, False)
-            self.promoted_pawn.update()
-            self.promoted_pawn = None
-            self.disable_board(False)
-            promoted_piece.update()
-            opponent_king = self.checked_king(False)
-            for movement in promoted_piece.all_moves():
-                if self.pieces[movement[0]][movement[1]].type == opponent_king.type:
-                    opponent_king.is_checked = True
-                    opponent_king.update()
-                    break
+        self.info_white.promotion_text.hide()
+        self.info_white.queen.hide()
+        self.info_white.bishop.hide()
+        self.info_white.knight.hide()
+        self.info_white.rook.hide()
+        self.info_black.promotion_text.hide()
+        self.info_black.queen.hide()
+        self.info_black.bishop.hide()
+        self.info_black.knight.hide()
+        self.info_black.rook.hide()
+        promoted_piece = None
+        match promoted:
+            case "Queen":
+                promoted_piece = Queen(self, self.promoted_pawn.position[0], self.promoted_pawn.position[1],
+                                       self.promoted_pawn.team)
+            case "Bishop":
+                promoted_piece = Bishop(self, self.promoted_pawn.position[0], self.promoted_pawn.position[1],
+                                        self.promoted_pawn.team)
+            case "Knight":
+                promoted_piece = Knight(self, self.promoted_pawn.position[0], self.promoted_pawn.position[1],
+                                        self.promoted_pawn.team)
+            case "Rook":
+                promoted_piece = Rook(self, self.promoted_pawn.position[0], self.promoted_pawn.position[1],
+                                      self.promoted_pawn.team)
 
-            self.update()
-        except Exception as e:
-            print(e)
+        movement = Movement(self.promoted_position, tuple(promoted_piece.position))
+        movement.promoted = promoted_piece.type
+        self.controller.movements.move(movement)
+        self.pieces[promoted_piece.position[0]][promoted_piece.position[1]] = promoted_piece
+        self.board.removeWidget(self.promoted_pawn)
+        self.board.addWidget(promoted_piece, promoted_piece.position[0], promoted_piece.position[1])
+        self.board.update()
+        self.promoted_pawn.destroy(False, False)
+        self.promoted_pawn.update()
+        self.promoted_pawn = None
+        self.disable_board(False)
+        promoted_piece.update()
+        opponent_king = self.checked_king(False)
+        for movement in promoted_piece.all_moves():
+            if self.pieces[movement[0]][movement[1]].type == opponent_king.type:
+                opponent_king.is_checked = True
+                opponent_king.update()
+                break
+
+        self.update()
 
     def paint(self):
         if self.selected_piece:

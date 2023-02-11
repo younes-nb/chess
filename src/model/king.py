@@ -1,4 +1,4 @@
-from src.Model.piece import Piece
+from src.model.piece import Piece
 from PyQt6.QtGui import QPixmap, QPainter, QColor
 from src.res import resource_path
 
@@ -12,10 +12,10 @@ class King(Piece):
         self.is_check_mate = False
         match self.team:
             case "White":
-                self.image = QPixmap(resource_path("Pieces/wk.svg"))
+                self.image = QPixmap(resource_path("pieces/wk.svg"))
                 self.type = "WKing"
             case "Black":
-                self.image = QPixmap(resource_path("Pieces/bk.svg"))
+                self.image = QPixmap(resource_path("pieces/bk.svg"))
                 self.type = "BKing"
 
     def all_moves(self):

@@ -11,7 +11,7 @@ class WinnerView(QWidget):
         self.layout = QVBoxLayout(self)
         self.name = "None"
         self.setWindowTitle("{} Won!".format(self.name))
-        self.setWindowIcon(QIcon(resource_path("Icons/icon.png")))
+        self.setWindowIcon(QIcon(resource_path("icons/icon.png")))
 
         label = QLabel("Winner Winner Chicken Dinner!")
         label.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -20,7 +20,7 @@ class WinnerView(QWidget):
         trophy = QLabel()
         trophy.setAlignment(Qt.AlignmentFlag.AlignCenter)
         trophy.setContentsMargins(0, 20, 0, 20)
-        trophy_gif = QMovie(resource_path("Icons/trophy.gif"))
+        trophy_gif = QMovie(resource_path("icons/trophy.gif"))
         trophy.setMovie(trophy_gif)
         trophy_gif.start()
 
